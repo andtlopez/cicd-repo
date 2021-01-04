@@ -215,6 +215,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            pip install awscli
             cat ~/project/.circleci/ansible/inventory.txt
             exit 1
       #- run:
