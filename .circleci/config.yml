@@ -42,12 +42,11 @@ jobs:
       - run:
           name: Build front-end
           command: |
-            - run: cd frontend
-            - run: npm i
+            - run: npm i frontend/node_modules
+            exit 1
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
-      - run: npm run lint
 
   build-backend:
     docker:
