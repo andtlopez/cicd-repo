@@ -172,6 +172,10 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run: 
+          name: Install workspace dependencies
+          command: |
+            yum -y install tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -350,8 +354,8 @@ workflows:
           #filters:
             #branches:
               #only: [test-feature-branch]
-      #- configure-infrastructure:
-          #requires: [deploy-infrastructure]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
       #- run-migrations:
           #requires: [configure-infrastructure]
       #- deploy-frontend:
