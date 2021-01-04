@@ -44,6 +44,7 @@ jobs:
           command: |
             - run: cd frontend
             - run: npm i
+            - run: npm run lint
             exit 1
       - save_cache:
           paths: [frontend/node_modules]
