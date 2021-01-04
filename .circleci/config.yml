@@ -193,8 +193,6 @@ jobs:
           command: |
             echo "[all]" > ~/project/.circleci/ansible/inventory.txt
             aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople" --output text >> ~/project/.circleci/ansible/inventory.txt
-            cat ~/project/.circleci/ansible/inventory.txt
-            exit 1
       - persist_to_workspace:
           root: ~/
           paths:
@@ -206,19 +204,21 @@ jobs:
       - image: tomonorimatsumura/ubuntu18-ansible:stable
     steps:
       - checkout
-      # Add ssh keys with fingerprint
-      # attach workspace
+      - add_ssh_keys:
+          fingerprints: ["e0:89:92:cb:a0:a3:e6:25:3b:51:ca:4b:01:d4:a7:38"]
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: |
-            # Your code here
+            cat ~/project/.circleci/ansible/inventory.txt
             exit 1
-      - run:
-          name: Configure server
-          command: |
+      #- run:
+          #name: Configure server
+          #command: |
             # Your code here
-            exit 1
-      # Here's where you will add some code to rollback on failure      
+            #exit 1
+      - destroy-environment      
 
   run-migrations:
     docker:
