@@ -28,7 +28,7 @@
         #state: touch
 
     - name: "write content to .env file"
-      #become: yes
+      become: yes
       copy:
         dest: /root/project/backend/.env
         content: |
@@ -42,7 +42,7 @@
           TYPEORM_DATABASE: ${TYPEORM_DATABASE}
     
     - name: "test .env file"
-      #become: yes
+      become: yes
       shell: cat /root/project/backend/.env
 
   roles:
