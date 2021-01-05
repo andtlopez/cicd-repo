@@ -205,24 +205,24 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: tomonorimatsumura/ubuntu18-ansible:stable
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["e0:89:92:cb:a0:a3:e6:25:3b:51:ca:4b:01:d4:a7:38"]
-      - attach_workspace:
-          at: ~/
       - run:
           name: Install dependencies
           command: |
             pip install awscli
-            cat ~/project/.circleci/ansible/inventory.txt
+            apk add --update tar gzip ansible curl
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Configure server
+          command: |
+            cd .circleci/ansible
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt configure-server.yml
             exit 1
-      #- run:
-          #name: Configure server
-          #command: |
-            # Your code here
-            #exit 1
       - destroy-environment      
 
   run-migrations:
