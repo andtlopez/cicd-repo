@@ -28,21 +28,3 @@
     global: yes
     production: yes
     state: present
-
-- name: "create .env file"
-  file:
-    path: /root/project/backend/.env
-    state: file
-
-- name: "write content to .env file"
-  copy:
-    dest: /root/project/backend/.env
-    content: |
-      ENVIRONMENT: production
-      TYPEORM_CONNECTION: ${TYPEORM_CONNECTION}
-      TYPEORM_ENTITIES: ${TYPEORM_ENTITIES}
-      TYPEORM_HOST: ${TYPEORM_HOST}
-      TYPEORM_PORT: ${TYPEORM_PORT}
-      TYPEORM_USERNAME: ${TYPEORM_USERNAME}
-      TYPEORM_PASSWORD: ${TYPEORM_PASSWORD}
-      TYPEORM_DATABASE: ${TYPEORM_DATABASE}

@@ -21,29 +21,12 @@
         state: latest
         update_cache: yes
 
-    - name: "create .env file"
-      become: yes
-      file:
-        path: /root/project/backend/.env
-        state: touch
-
-    - name: "write content to .env file"
-      become: yes
+    - name: "copy backend"
       copy:
-        dest: /root/project/backend/.env
-        content: |
-          ENVIRONMENT: production
-          TYPEORM_CONNECTION: ${TYPEORM_CONNECTION}
-          TYPEORM_ENTITIES: ${TYPEORM_ENTITIES}
-          TYPEORM_HOST: ${TYPEORM_HOST}
-          TYPEORM_PORT: ${TYPEORM_PORT}
-          TYPEORM_USERNAME: ${TYPEORM_USERNAME}
-          TYPEORM_PASSWORD: ${TYPEORM_PASSWORD}
-          TYPEORM_DATABASE: ${TYPEORM_DATABASE}
-    
-    - name: "test .env file"
-      become: yes
-      shell: cat /root/project/backend/.env
+        src: /root/project/backend
+        dest: /home/ubuntu
 
+    - name: "check contents"
+      shell: ls -la
   roles:
     #- configure-server
