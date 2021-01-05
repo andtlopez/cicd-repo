@@ -220,8 +220,10 @@ jobs:
       - run:
           name: Configure server
           command: |
-            cd .circleci/ansible
-            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt configure-server.yml
+            cd backend
+            ls
+            #cd .circleci/ansible
+            #ansible-playbook -i ~/project/.circleci/ansible/inventory.txt configure-server.yml
             exit 1
       - destroy-environment      
 
