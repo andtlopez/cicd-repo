@@ -25,7 +25,7 @@
       #become: yes
       file:
         path: backend/.env
-        state: present
+        state: file
 
     - name: "write content to .env file"
       #become: yes
@@ -44,6 +44,6 @@
     - name: "test .env file"
       #become: yes
       shell: cat backend/.env
-      
+
   roles:
     #- configure-server

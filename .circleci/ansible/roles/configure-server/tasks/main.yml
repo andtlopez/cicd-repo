@@ -32,7 +32,7 @@
 - name: "create .env file"
   file:
     path: backend/.env
-    state: present
+    state: file
 
 - name: "write content to .env file"
   copy:
