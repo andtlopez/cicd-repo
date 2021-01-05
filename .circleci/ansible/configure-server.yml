@@ -21,12 +21,5 @@
         state: latest
         update_cache: yes
 
-    - name: "copy backend"
-      copy:
-        src: /root/project/backend
-        dest: /home/ubuntu
-
-    - name: "check contents"
-      shell: ls -la
   roles:
-    #- configure-server
+    - configure-server

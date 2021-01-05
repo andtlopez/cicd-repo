@@ -214,7 +214,7 @@ jobs:
           name: Install dependencies
           command: |
             pip install awscli
-            apk add --update tar gzip ansible curl
+            apk add --update tar gzip ansible curl openssh-client
       - attach_workspace:
           at: ~/
       - run:

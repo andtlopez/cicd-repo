@@ -28,3 +28,13 @@
     global: yes
     production: yes
     state: present
+
+- name: "copy backend"
+  copy:
+    src: /root/project/backend
+    dest: /home/ubuntu
+
+- name: Executing node
+  shell: |
+    cd /home/ubuntu/backend
+    pm2 start npm --name backend -- start
