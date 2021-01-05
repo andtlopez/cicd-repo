@@ -21,11 +21,11 @@
         state: latest
         update_cache: yes
 
-    #- name: "create .env file"
-      #become: yes
-      #file:
-        #path: /root/project/backend/.env
-        #state: touch
+    - name: "create .env file"
+      become: yes
+      file:
+        path: /root/project/backend/.env
+        state: touch
 
     - name: "write content to .env file"
       become: yes
