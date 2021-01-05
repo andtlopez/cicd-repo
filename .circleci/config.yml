@@ -231,7 +231,6 @@ jobs:
             cat backend/.env
             cd .circleci/ansible
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt configure-server.yml
-            exit 1
       - destroy-environment      
 
   run-migrations:
