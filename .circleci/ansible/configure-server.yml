@@ -23,5 +23,5 @@
         name: python3
         state: latest
         update_cache: yes
-  #roles:
-    # Your code here
+  roles:
+    - configure-server
