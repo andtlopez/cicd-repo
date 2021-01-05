@@ -21,16 +21,16 @@
         state: latest
         update_cache: yes
 
-    - name: "create .env file"
+    #- name: "create .env file"
       #become: yes
-      file:
-        path: backend/.env
-        state: file
+      #file:
+        #path: /root/project/backend/.env
+        #state: touch
 
     - name: "write content to .env file"
       #become: yes
       copy:
-        dest: backend/.env
+        dest: /root/project/backend/.env
         content: |
           ENVIRONMENT: production
           TYPEORM_CONNECTION: ${TYPEORM_CONNECTION}
@@ -43,7 +43,7 @@
     
     - name: "test .env file"
       #become: yes
-      shell: cat backend/.env
+      shell: cat /root/project/backend/.env
 
   roles:
     #- configure-server

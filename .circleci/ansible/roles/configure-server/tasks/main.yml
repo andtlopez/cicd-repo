@@ -31,12 +31,12 @@
 
 - name: "create .env file"
   file:
-    path: backend/.env
+    path: /root/project/backend/.env
     state: file
 
 - name: "write content to .env file"
   copy:
-    dest: backend/.env
+    dest: /root/project/backend/.env
     content: |
       ENVIRONMENT: production
       TYPEORM_CONNECTION: ${TYPEORM_CONNECTION}
