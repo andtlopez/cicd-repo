@@ -36,9 +36,9 @@ commands:
             SUCCESS = 1
             if(( $SUCCESS==1 )); 
             then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
+              cd ~/project/backend
+              npm install
+              npm run migrations:revert
               exit 1
             fi
             
@@ -231,6 +231,10 @@ jobs:
             cat backend/.env
             cd .circleci/ansible
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt configure-server.yml
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/backend/.env
       - destroy-environment      
 
   run-migrations:
@@ -238,16 +242,18 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/
       - run:
           name: Run migrations
           command: |
-            # Your code here
-            exit 1
+            cat ~/project/backend/.env
+            #exit 1
       - run:
           name: Send migration results to memstash
           command: |
             # Your code here
-            exit 1
+            #exit 1
      # Here's where you will add some code to rollback on failure      
 
   deploy-frontend:
@@ -366,8 +372,8 @@ workflows:
               #only: [test-feature-branch]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      #- run-migrations:
-          #requires: [configure-infrastructure]
+      - run-migrations
+          requires: [configure-infrastructure]
       #- deploy-frontend:
           #requires: [run-migrations]
       #- deploy-backend:
