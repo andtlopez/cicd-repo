@@ -2,7 +2,7 @@
 - name: "extract backend files"
   become: yes
   unarchive:
-    src: backend.tgz
+    src: ~/project/backend.tgz
     dest: /home/ubuntu
 
 - name: Executing node
