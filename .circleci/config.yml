@@ -248,10 +248,10 @@ jobs:
             echo TYPEORM_DATABASE: ${TYPEORM_DATABASE} >> backend/.env
             cd backend
             cat .env
-            #npm install
-            #npm run build
-            #npm run migrations >> migrations
-            #cat migrations
+            npm install
+            npm run build
+            npm run migrations >> migrations
+            cat migrations
       - run:
           name: Send migration results to memstash
           command: |
