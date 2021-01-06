@@ -247,7 +247,7 @@ jobs:
             else
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" \
             --request PUT \
-            --data "1" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID}
+            --data "0" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID}
             fi
       #- revert-migrations
       #- destroy-environment      
@@ -263,23 +263,22 @@ jobs:
             yum install -y tar gzip gcc-c++ make
             curl -sL https://rpm.nodesource.com/setup_13.x | bash -
             yum -y install nodejs
-            exit 1
-      #- attach_workspace:
-          #at: ~/
-      #- run:
-          #name: Get backend url
-          #command: |
-            #export BACKEND_IP="$(cat ~/project/.circleci/ansible/inventory.txt | tail -n 1)"
-            #export API_URL="http://${BACKEND_IP}:3030"
-            #echo "${API_URL}"
-            #cd frontend
-            #npm i
-            #npm run build
-      #- run:
-          #name: Deploy frontend objects
-          #command: |
-            #cd frontend
-            #aws s3 cp ./dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Get backend url
+          command: |
+            export BACKEND_IP="$(cat ~/project/.circleci/ansible/inventory.txt | tail -n 1)"
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+            cd frontend
+            npm i
+            npm run build
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            aws s3 cp ./dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - revert-migrations
       #- destroy-environment      
                     
@@ -391,8 +390,8 @@ workflows:
           #requires: [configure-infrastructure]
       #- deploy-backend:
           #requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
+      #- deploy-frontend:
+          #requires: [run-migrations]
           #requires: [deploy-backend]
       #- smoke-test:
           #requires: [deploy-backend, deploy-frontend]
