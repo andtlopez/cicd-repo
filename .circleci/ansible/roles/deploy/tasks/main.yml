@@ -5,8 +5,15 @@
     src: ~/project/backend.tgz
     dest: /home/ubuntu
 
+- name: Recursively change ownership of backend
+  file:
+    path: /home/ubuntu/backend
+    state: directory
+    recurse: yes
+    owner: ubuntu
+    group: ubuntu
+
 - name: Executing node
-  become: yes
   shell: |
     cd /home/ubuntu/backend
     npm i
