@@ -237,12 +237,12 @@ jobs:
           command: |
             cd backend
             npm i
-            npm run migrations > ~/backend/migrations
-            cat migrations
+            npm run migrations > ~/project/backend/migrations
+            cat ~/project/backend/migrations
       - run:
           name: Send migration results to memstash
           command: |
-            if grep -q "has been executed successfully." ~/backend/migrations
+            if grep -q "has been executed successfully." ~/project/backend/migrations
             then
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" \
             --request PUT \
