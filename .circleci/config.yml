@@ -261,7 +261,7 @@ jobs:
           name: Install dependencies
           command: |
             yum install -y tar gzip gcc-c++ make
-            curl -sL https://rpm.nodesource.com/setup_13.x | sudo bash -
+            curl -sL https://rpm.nodesource.com/setup_13.x | bash -
             yum -y install nodejs
             exit 1
       #- attach_workspace:
