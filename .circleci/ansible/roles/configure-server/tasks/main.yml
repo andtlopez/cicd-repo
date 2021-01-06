@@ -18,8 +18,7 @@
   become: yes
   apt:
     name: ["nodejs", "npm"]
-    state: latest
-    update_cache: yes
+    state: present
 
 - name: "install pm2"
   become: yes
@@ -37,4 +36,6 @@
 - name: Executing node
   shell: |
     cd /home/ubuntu/backend
+    npm i
+    npm build
     pm2 start npm --name backend -- start
