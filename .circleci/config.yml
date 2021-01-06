@@ -198,7 +198,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - ~/project/.circleci/ansible/inventory.txt
+            - project/.circleci/ansible/inventory.txt
       - destroy-environment      
 
   configure-infrastructure:
@@ -229,7 +229,7 @@ jobs:
             echo TYPEORM_PASSWORD: ${TYPEORM_PASSWORD} >> backend/.env
             echo TYPEORM_DATABASE: ${TYPEORM_DATABASE} >> backend/.env
             cd .circleci/ansible
-            ansible-playbook -i ~/.circleci/ansible/inventory.txt configure-server.yml
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt configure-server.yml
       - persist_to_workspace:
           root: ~/
           paths:
