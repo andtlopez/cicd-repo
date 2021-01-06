@@ -392,7 +392,7 @@ workflows:
       #- deploy-backend:
           #requires: [configure-infrastructure]
       - deploy-frontend:
-          equires: [run-migrations]
+          requires: [run-migrations]
           #requires: [deploy-backend]
       #- smoke-test:
           #requires: [deploy-backend, deploy-frontend]
