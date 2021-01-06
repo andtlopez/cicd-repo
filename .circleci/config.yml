@@ -205,7 +205,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -216,7 +216,7 @@ jobs:
           name: Install dependencies
           command: |
             pip install awscli
-            apk add --update tar gzip ansible curl openssh-client
+            apt-get install -y tar gzip ansible curl openssh-client
       - attach_workspace:
           at: ~/
       - run:
@@ -230,6 +230,9 @@ jobs:
             echo TYPEORM_USERNAME: ${TYPEORM_USERNAME} >> backend/.env
             echo TYPEORM_PASSWORD: ${TYPEORM_PASSWORD} >> backend/.env
             echo TYPEORM_DATABASE: ${TYPEORM_DATABASE} >> backend/.env
+            cd backend
+            npm i
+            cd ..
             cd .circleci/ansible
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt configure-server.yml
       - persist_to_workspace:
