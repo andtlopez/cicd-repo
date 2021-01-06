@@ -182,14 +182,14 @@ jobs:
               --tags project=udapeople \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
-      #- run:
-          #name: Ensure front-end infrastructure exist
-          #command: |
-            #aws cloudformation deploy \
-              #--template-file .circleci/files/frontend.yml \
-              #--tags project=udapeople \
-              #--stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              #--parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --tags project=udapeople \
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -263,17 +263,23 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # your code here
+            curl -sL https://deb.nodesource.com/setup_13.x | sudo bash -
+            sudo apt-get install -y nodejs
+      - attach_workspace:
+          at: ~/
       - run:
           name: Get backend url
           command: |
-            # your code here
+            export BACKEND_IP="$(cat ~/project/.circleci/ansible/inventory.txt | tail -n 1)"
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
       - run:
           name: Deploy frontend objects
           command: |
-            # your code here
+            cd frontend
+            npm i
+            npm run build
+            aws s3 cp ./dist s3://udapeople-id --recursive
       #- revert-migrations
       #- destroy-environment      
                     
@@ -382,10 +388,10 @@ workflows:
           requires: [deploy-infrastructure]
       #- run-migrations:
           #requires: [configure-infrastructure]
-      #- deploy-frontend:
-          #requires: [run-migrations]
       - deploy-backend:
           requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [deploy-backend]
           #requires: [run-migrations]
       #- smoke-test:
           #requires: [deploy-backend, deploy-frontend]
