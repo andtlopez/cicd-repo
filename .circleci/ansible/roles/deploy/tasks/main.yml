@@ -6,6 +6,7 @@
     dest: /home/ubuntu
 
 - name: Executing node
+  become: yes
   shell: |
     cd /home/ubuntu/backend
     npm i
