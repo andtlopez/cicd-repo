@@ -214,9 +214,9 @@ jobs:
           fingerprints: ["e0:89:92:cb:a0:a3:e6:25:3b:51:ca:4b:01:d4:a7:38"]
       - run:
           name: Install dependencies
-          command: |
-            pip install awscli
-            apt-get install -y tar gzip ansible curl openssh-client
+          command: | 
+            apt-get install -y python3 python3-pip tar gzip ansible curl openssh-client
+            pip3 install awscli
       - attach_workspace:
           at: ~/
       - run:
@@ -370,14 +370,14 @@ workflows:
           #requires: [build-backend]
       #- scan-frontend:
           #requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [build-backend]
+      #- deploy-infrastructure:
+          #requires: [build-backend]
           #requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           #filters:
             #branches:
               #only: [test-feature-branch]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
+      - configure-infrastructure
+          #requires: [deploy-infrastructure]
       #- run-migrations
           #requires: [configure-infrastructure]
       #- deploy-frontend:
