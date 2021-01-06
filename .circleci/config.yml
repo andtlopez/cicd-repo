@@ -235,8 +235,6 @@ jobs:
           command: |
             sudo apt-get update -y
             sudo apt-get install awscli -y
-      - attach_workspace:
-          at: ~/
       - run:
           name: Run migrations
           command: |
@@ -249,10 +247,11 @@ jobs:
             echo TYPEORM_PASSWORD: ${TYPEORM_PASSWORD} >> backend/.env
             echo TYPEORM_DATABASE: ${TYPEORM_DATABASE} >> backend/.env
             cd backend
-            npm install
-            npm run build
-            npm run migrations >> migrations
-            cat migrations
+            cat .env
+            #npm install
+            #npm run build
+            #npm run migrations >> migrations
+            #cat migrations
       - run:
           name: Send migration results to memstash
           command: |
