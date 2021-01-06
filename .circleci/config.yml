@@ -22,7 +22,6 @@ commands:
             aws s3 rm "s3://<< parameters.bucket-name >>" --recursive
             aws cloudformation delete-stack --stack-name << parameters.frontend-name >>
             aws cloudformation delete-stack --stack-name << parameters.backend-name >>
-            exit 1
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     steps:
@@ -35,9 +34,8 @@ commands:
             if(( $SUCCESS )); 
             then
               cd ~/project/backend
-              npm install
+              npm i
               npm run migrations:revert
-              exit 1
             fi
             
 jobs:
@@ -251,6 +249,7 @@ jobs:
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" \
             --request PUT \
             --data "1" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID}
+            exit 1
             fi
       - revert-migrations
       #- destroy-environment      
