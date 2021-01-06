@@ -247,7 +247,7 @@ jobs:
             else
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" \
             --request PUT \
-            --data "0" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID}
+            --data "1" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID}
             fi
       #- revert-migrations
       #- destroy-environment      
@@ -261,7 +261,7 @@ jobs:
           name: Install dependencies
           command: |
             yum install -y tar gzip 
-            curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
+            curl -sL https://rpm.nodesource.com/setup_13.x | sudo bash -
             yum install -y nodejs
             exit 1
       #- attach_workspace:
