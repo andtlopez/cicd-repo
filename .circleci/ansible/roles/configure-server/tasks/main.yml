@@ -1,9 +1,4 @@
 ---
-- name: "update apt packages."
-  become: yes
-  apt:
-    update_cache: yes
-
 - name: "upgrade packages"
   become: yes
   apt:
@@ -27,15 +22,3 @@
     global: yes
     production: yes
     state: present
-
-- name: "copy backend"
-  copy:
-    src: /root/project/backend
-    dest: /home/ubuntu
-
-- name: Executing node
-  shell: |
-    cd /home/ubuntu/backend
-    npm i
-    npm build
-    pm2 start npm --name backend -- start
