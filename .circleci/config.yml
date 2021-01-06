@@ -262,7 +262,7 @@ jobs:
           command: |
             yum install -y tar gzip 
             curl -sL https://rpm.nodesource.com/setup_13.x | sudo bash -
-            yum install -y nodejs nodejs-npm
+            yum -y install gcc-c++ make nodejs
             exit 1
       #- attach_workspace:
           #at: ~/
