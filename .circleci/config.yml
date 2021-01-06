@@ -220,8 +220,7 @@ jobs:
           command: |
             cd .circleci/ansible
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt configure-server.yml
-      #- destroy-environment
-      #- revert-migrations     
+      - destroy-environment  
 
   run-migrations:
     docker:
@@ -238,12 +237,12 @@ jobs:
           command: |
             cd backend
             npm i
-            npm run migrations > migrations
+            npm run migrations > ~/backend/migrations
             cat migrations
       - run:
           name: Send migration results to memstash
           command: |
-            if grep -q "has been executed successfully." migrations
+            if grep -q "has been executed successfully." ~/backend/migrations
             then
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" \
             --request PUT \
@@ -253,7 +252,8 @@ jobs:
             --request PUT \
             --data "0" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID}
             fi
-      #- destroy-environment      
+      - revert-migrations
+      - destroy-environment      
 
   deploy-frontend:
     docker:
@@ -274,7 +274,8 @@ jobs:
           name: Deploy frontend objects
           command: |
             # your code here
-      # Here's where you will add some code to rollback on failure      
+      #- revert-migrations
+      #- destroy-environment      
                     
   deploy-backend:
     docker:
@@ -353,26 +354,25 @@ cleanup:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
+      #- build-frontend
+      #- build-backend
+      #- test-frontend:
+          #requires: [build-frontend]
+      #- test-backend:
           #requires: [build-backend]
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      #- scan-backend:
+          #requires: [build-backend]
+      #- scan-frontend:
+          #requires: [build-frontend]
+      #- deploy-infrastructure:
+          #requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           #filters:
             #branches:
               #only: [test-feature-branch]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
+      #- configure-infrastructure:
+          #requires: [deploy-infrastructure]
+      - run-migrations
+          #requires: [configure-infrastructure]
       #- deploy-frontend:
           #requires: [run-migrations]
       #- deploy-backend:
