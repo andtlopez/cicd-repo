@@ -249,6 +249,7 @@ jobs:
             --request PUT \
             --data "1" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID}
             fi
+      - run: exit 1
       - revert-migrations
       #- destroy-environment      
 
