@@ -1,27 +1,51 @@
-- name: "install node exporter."
+- name: add node_exporter user
+  become: yes
+  user:
+    name: node_exporter
+    shell: /sbin/nologin
+    append: yes
+    state: present
+
+- name: "download node_exporter"
+  get_url:
+    url: https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
+    dest: /home/ubuntu
+
+- name: "extract node_exporter"
   unarchive:
-    src: https://github.com/prometheus/node_exporter/releases/download/v0.17.0/node_exporter-0.17.0.linux-amd64.tar.gz
-    dest: /tmp
+    src: /home/ubuntu/node_exporter-1.0.1.linux-amd64.tar.gz
+    dest: /home/ubuntu
     remote_src: yes
 
-- name: "move binary to /usr/local/bin."
-  become: true
+- name: Copy node_exporter to /usr/local/bin
+  become: yes
   copy:
-    src: /tmp/node_exporter-0.17.0.linux-amd64/node_exporter
+    src: /home/ubuntu/node_exporter-1.0.1.linux-amd64/node_exporter
     dest: /usr/local/bin/node_exporter
     remote_src: yes
-    mode: '0777'
-    
-- name: "add node exporter configuration."
-  become: true
-  copy:
-    src: node_exporter.service
-    dest: /etc/systemd/system/
+    directory_mode: yes
+    mode: a+x
 
-- name: "enable node_exporter service"
-  become: true
-  systemd:
-    state: restarted
-    daemon_reload: yes
-    name: node_exporter
+- name: Delete node_exporter directory
+  file:
+    path: /home/ubuntu/node_exporter-1.0.1.linux-amd64/
+    state: absent
+
+- name: Delete node_exporter tar
+  file:
+    path: /home/ubuntu/node_exporter-1.0.1.linux-amd64.tar.gz
+    state: absent
+
+- name: Copy node-exporter.service file
+  become: yes
+  template:
+    src: files/node-exporter.service
+    dest: /etc/systemd/system/node-exporter.service
+    mode: a+x
+
+- name: Start and enable service node-exporter, if not started
+  become: yes
+  service:
+    name: node-exporter
+    state: started
     enabled: yes

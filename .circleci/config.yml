@@ -211,14 +211,21 @@ jobs:
           command: |
             pip install awscli
             apk add --update tar gzip ansible curl openssh-client
-      - attach_workspace:
-          at: ~/
+      #- attach_workspace:
+          #at: ~/
+      #- run:
+          #name: Configure server
+          #command: |
+            #cd .circleci/ansible
+            #ansible-playbook -i ~/project/.circleci/ansible/inventory.txt configure-server.yml
       - run:
-          name: Configure server
+          name: Install node_exporter
           command: |
+            echo "[web]" > ~/project/.circleci/ansible/inventory.txt
+            echo "44.242.153.172" >> ~/project/.circleci/ansible/inventory.txt
             cd .circleci/ansible
-            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt configure-server.yml
-      - destroy-environment  
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-node-exporter.yml
+      #- destroy-environment
 
   run-migrations:
     docker:
@@ -412,32 +419,32 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          filters:
-            branches:
-              only: [main]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - deploy-backend:
-          requires: [run-migrations]
-      - deploy-frontend:
-          requires: [deploy-backend]
-      - smoke-test:
-          requires: [deploy-frontend]
-      - cloudfront-update:
-          requires: [smoke-test]
-      - cleanup:
-          requires: [cloudfront-update]
+      #- build-frontend
+      #- build-backend
+      #- test-frontend:
+          #requires: [build-frontend]
+      #- test-backend:
+          #requires: [build-backend]
+      #- scan-backend:
+          #requires: [build-backend]
+      #- scan-frontend:
+          #requires: [build-frontend]
+      #- deploy-infrastructure:
+          #requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          #filters:
+            #branches:
+              #only: [main]
+      - configure-infrastructure
+          #requires: [deploy-infrastructure]
+      #- run-migrations:
+          #requires: [configure-infrastructure]
+      #- deploy-backend:
+          #requires: [run-migrations]
+      #- deploy-frontend:
+          #requires: [deploy-backend]
+      #- smoke-test:
+          #requires: [deploy-frontend]
+      #- cloudfront-update:
+          #requires: [smoke-test]
+      #- cleanup:
+          #requires: [cloudfront-update]
