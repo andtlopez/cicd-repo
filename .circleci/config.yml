@@ -247,9 +247,9 @@ jobs:
             else
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" \
             --request PUT \
-            --data "0" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID}
+            --data "1" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID}
             fi
-      #- revert-migrations
+      - revert-migrations
       #- destroy-environment      
 
   deploy-frontend:
