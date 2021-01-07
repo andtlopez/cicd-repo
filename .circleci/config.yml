@@ -171,22 +171,22 @@ jobs:
           name: Install workspace dependencies
           command: |
             yum -y install tar gzip
-      #- run:
-          #name: Ensure back-end infrastructure exists
-          #command: |
-            #aws cloudformation deploy \
-              #--template-file .circleci/files/backend.yml \
-              #--tags project=udapeople \
-              #--stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              #--parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
-      #- run:
-          #name: Ensure front-end infrastructure exist
-          #command: |
-            #aws cloudformation deploy \
-              #--template-file .circleci/files/frontend.yml \
-              #--tags project=udapeople \
-              #--stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              #--parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
+      - run:
+          name: Ensure back-end infrastructure exists
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              --tags project=udapeople \
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --tags project=udapeople \
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -196,7 +196,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      #- destroy-environment      
+      - destroy-environment      
 
   configure-infrastructure:
     docker:
@@ -249,9 +249,8 @@ jobs:
             --request PUT \
             --data "1" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID}
             fi
-      - run: exit 1
       - revert-migrations
-      #- destroy-environment      
+      - destroy-environment      
 
   deploy-frontend:
     docker:
@@ -281,7 +280,7 @@ jobs:
             cd frontend
             aws s3 cp ./dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - revert-migrations
-      #- destroy-environment      
+      - destroy-environment      
                     
   deploy-backend:
     docker:
@@ -307,7 +306,7 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
       - revert-migrations
-      #- destroy-environment
+      - destroy-environment
 
   smoke-test:
     docker:
@@ -341,16 +340,16 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            #export FRONTEND_URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-2.amazonaws.com"
-            export FRONTEND_URL="http://udapeople-610a8ae.s3-website-us-west-2.amazonaws.com"
+            export FRONTEND_URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-2.amazonaws.com"
             echo $FRONTEND_URL
             if curl -s $FRONTEND_URL | grep "Welcome"
             then
-              return 0
+              return 1
             else
               return 1
             fi
-      # Here's where you will add some code to rollback on failure  
+      - revert-migrations
+      - destroy-environment
 
   cloudfront-update:
     docker:
@@ -404,18 +403,16 @@ workflows:
           #filters:
             #branches:
               #only: [test-feature-branch]
-      #- configure-infrastructure:
-          #requires: [deploy-infrastructure]
-      #- run-migrations:
-          #requires: [configure-infrastructure]
-      #- deploy-backend:
-          #requires: [configure-infrastructure]
-      #- deploy-frontend:
-          #requires: [run-migrations]
-          #requires: [deploy-backend]
-      - smoke-test:
+      - configure-infrastructure:
           requires: [deploy-infrastructure]
-          #requires: [deploy-backend, deploy-frontend]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-backend:
+          requires: [run-migrations]
+      - deploy-frontend:
+          requires: [deploy-backend]
+      - smoke-test:
+          requires: [deploy-frontend]
       #- cloudfront-update:
           #requires: [smoke-test]
       #- cleanup:
