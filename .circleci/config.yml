@@ -20,6 +20,7 @@ commands:
           when: on_fail
           command: |
             aws s3 rm "s3://<< parameters.bucket-name >>" --recursive
+            aws s3 rb "s3://<< parameters.bucket-name >>" --force
             aws cloudformation delete-stack --stack-name << parameters.frontend-name >>
             aws cloudformation delete-stack --stack-name << parameters.backend-name >>
   revert-migrations:
