@@ -364,13 +364,21 @@ jobs:
             curl -sL https://rpm.nodesource.com/setup_13.x | bash -
             yum -y install nodejs
       - run:
-          name: Update cloudfront distribution
+          name: Store Old Workflow ID
           command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/cloudfront.yml \
-              --tags project=udapeople \
-              --stack-name "udapeople-gy5x423actfgny593" \
-              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" 
+            aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text >> project/.circleci/ansible/workflow_id.txt
+      #- run:
+          #name: Update cloudfront distribution
+          #command: |
+            #aws cloudformation deploy \
+              #--template-file .circleci/files/cloudfront.yml \
+              #--tags project=udapeople \
+              #--stack-name "udapeople-gy5x423actfgny593" \
+              #--parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/workflow_id.txt
       #- revert-migrations
       #- destroy-environment 
 
@@ -380,11 +388,15 @@ jobs:
       steps:
         - checkout
         - run:
+            name: Install dependencies
+            command: |
+              yum install -y tar gzip
+        - attach_workspace:
+            at: ~/
+        - run:
             name: Get old stack workflow id
             command: |
-              export OldWorkflowID=$(aws cloudformation \
-                list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                --no-paginate --output text)
+              export OldWorkflowID=$(cat ~/project/.circleci/ansible/workflow_id.txt)
               export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
                 --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
               echo $OldWorkflowID
@@ -425,7 +437,7 @@ workflows:
           #requires: [deploy-backend]
       #- smoke-test:
           #requires: [deploy-frontend]
-      #- cloudfront-update:
+      - cloudfront-update
           #requires: [smoke-test]
-      - cleanup
-          #requires: [cloudfront-update]
+      - cleanup:
+          requires: [cloudfront-update]
