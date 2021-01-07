@@ -21,8 +21,8 @@ commands:
           command: |
             aws s3 rm "s3://<< parameters.bucket-name >>" --recursive
             aws s3 rb "s3://<< parameters.bucket-name >>" --force
-            aws cloudformation delete-stack --stack-name << parameters.frontend-name >>
             aws cloudformation delete-stack --stack-name << parameters.backend-name >>
+            aws cloudformation delete-stack --stack-name << parameters.frontend-name >>
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     steps:
@@ -345,7 +345,7 @@ jobs:
             echo $FRONTEND_URL
             if curl -s $FRONTEND_URL | grep "Welcome"
             then
-              return 1
+              return 0
             else
               return 1
             fi
@@ -360,12 +360,19 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # your code here
+            yum install -y tar gzip gcc-c++ make
+            curl -sL https://rpm.nodesource.com/setup_13.x | bash -
+            yum -y install nodejs
       - run:
           name: Update cloudfront distribution
           command: |
-            # your code here
-      # Here's where you will add some code to rollback on failure  
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --tags project=udapeople \
+              --stack-name "udapeople-gy5x423actfgny593" \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" 
+      #- revert-migrations
+      #- destroy-environment 
 
 cleanup:
     docker:
