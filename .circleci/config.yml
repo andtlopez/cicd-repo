@@ -221,8 +221,6 @@ jobs:
       - run:
           name: Install node_exporter
           command: |
-            echo "[web]" > ~/project/.circleci/ansible/inventory.txt
-            echo "44.242.153.172" >> ~/project/.circleci/ansible/inventory.txt
             cd .circleci/ansible
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-node-exporter.yml
       - destroy-environment
