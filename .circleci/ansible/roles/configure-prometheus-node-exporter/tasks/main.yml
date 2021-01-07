@@ -38,8 +38,8 @@
 
 - name: Copy node-exporter.service file
   become: yes
-  template:
-    src: ~/project/.circleci/ansible/roles/configure-prometheus-node-exporter/files/node-exporter.service
+  copy:
+    src: ~/project/.circleci/ansible/roles/configure-prometheus-node-exporter/files/node_exporter.service
     dest: /etc/systemd/system/node-exporter.service
     mode: a+x
 
